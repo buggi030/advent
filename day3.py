@@ -12,38 +12,63 @@ class Solution:
         self.answersOne = {}
         self.answerTwo = 0
         self.data = data
+        self.gears = {}
 
-    def isValid(self, baseI, baseJ):
+    def isIntervalValid(self, baseI, startJ, endJ):
+        indices = [(baseI, _) for _ in range(startJ, endJ+1)]
         data = self.data
-        for i in range(-1,2):
-            for j in range(-1,2):
-                curI = baseI+i
-                curJ = baseJ+j
-                if 0<=curI<len(data) and 0<=curJ<len(data[baseI]):
-                    if data[curI][curJ]!='.' and not data[curI][curJ].isdigit() and data[curI][curJ]!="\n":
-                        return True
-        return False
+        for curI in range(baseI-1, baseI+2):
+            for curJ in range(startJ-1,endJ+2):
+                if (curI,curJ) in indices:
+                    continue
+                if 0<=curI<len(data) and 0<=curJ<len(data[0]):
+                    if data[curI][curJ]!='.'  and not data[curI][curJ].isdigit() and data[curI][curJ]!="\n":
+                        return (curI,curJ) if data[curI][curJ]=='*' else None, True
+#         print("")
+        return None, False
 
     def parseRow(self, row, index):
         valid = False
         self.answersOne[index] = []
         currentDigits = ''
+        currentIndexes = []
         for j, char in enumerate(row):
             if char.isdigit():
                 currentDigits+=char
-                valid = valid | self.isValid(index, j)
-            else:
-                if valid:
+                currentIndexes.append(j)
+            elif len(currentIndexes):
+                gear, isIntervalValid = self.isIntervalValid(index, min(currentIndexes), max(currentIndexes))
+                if isIntervalValid:
                     num = int(currentDigits,10)
                     self.answerOne+=num
                     self.answersOne[index].append(num)
-                    valid = False
+                    if gear:
+                        if gear not in self.gears:
+                            self.gears[gear] = []
+                        self.gears[gear].append(num)
                 currentDigits = ''
+                currentIndexes = []
+
+    def findAnswerTwo(self):
+        result = 0
+        for key in self.gears:
+            if len(self.gears[key])>1:
+                print(self.gears[key], functools.reduce(lambda a, b: a*b, self.gears[key]))
+                result+=functools.reduce(lambda a, b: a*b, self.gears[key])
+#                 print(self.gears[key], )
+        print(result)
 
     def runOne(self):
         for index, line in enumerate(self.data):
             numbers = self.parseRow(line, index)
+        print(self.answerOne)
+
 #         pprint.pprint(self.answersOne)
+#         sums = [functools.reduce(lambda a, b: a+b, self.answersOne[index]) for index in self.answersOne]
+#         pprint.pprint(self.answersOne)
+#         print(functools.reduce(lambda a, b: a+b, sums))
+#         pprint.pprint(self.gears)
+        print(self.findAnswerTwo())
         return self.answerOne
 
 
@@ -59,6 +84,7 @@ class Solution:
 with open(os.getcwd() + f'/inputs/day3', 'r') as f:
     data = f.readlines()
 
+# print(parts())
 solution = Solution(data)
 print(solution.runOne())
 # print(solution.runTwo())

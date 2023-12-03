@@ -19,44 +19,31 @@ class Solution:
             for j in range(-1,2):
                 curI = baseI+i
                 curJ = baseJ+j
-#                 print(curI,curJ,curIdata[curI][curJ])
-                if 0<=curI<len(data) and 0<=curJ<len(data[baseI]) and data[curI][curJ]!='.' and not data[curI][curJ].isdigit():
-#                     print(self.data[curI][curJ])
-                    return True
+                if 0<=curI<len(data) and 0<=curJ<len(data[baseI]):
+                    if data[curI][curJ]!='.' and not data[curI][curJ].isdigit() and data[curI][curJ]!="\n":
+                        return True
         return False
-
 
     def parseRow(self, row, index):
         valid = False
         self.answersOne[index] = []
-#         print("")
-#         print(row)
         currentDigits = ''
         for j, char in enumerate(row):
             if char.isdigit():
                 currentDigits+=char
-#                 print('currentDigits:',currentDigits)
                 valid = valid | self.isValid(index, j)
             else:
                 if valid:
                     num = int(currentDigits,10)
-#                     print('num:',num, end=", ")
                     self.answerOne+=num
                     self.answersOne[index].append(num)
-#                     print('answer:',self.answerOne, end=";")
                     valid = False
-#                 print(currentDigits)
                 currentDigits = ''
 
     def runOne(self):
         for index, line in enumerate(self.data):
             numbers = self.parseRow(line, index)
-
-
-        pprint.pprint(self.answersOne)
-
-        print("The sum of the list elements is : ", end="")
-        print(functools.reduce(lambda a, b: a+b, self.answersOne))
+#         pprint.pprint(self.answersOne)
         return self.answerOne
 
 

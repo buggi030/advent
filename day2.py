@@ -1,9 +1,6 @@
 import os
 import re
 
-game_max = {'red':12, 'green':13, 'blue':14}
-answer = 0
-
 class Solution:
     def __init__(self, data):
         self.answerOne = 0

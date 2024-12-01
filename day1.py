@@ -1,43 +1,44 @@
-import os
-
-data = None
-spelled_digits = {'one':1, 'two':2, 'three':3, 'four':4, 'five':5, 'six':6, 'seven':7, 'eight':8, 'nine':9}
-
-def temp(char, subLine, reversed = False):
-    if char.isdigit():
-        return int(char, 10), subLine
-    if reversed:
-        subLine=char+subLine
-    else:
-        subLine+=char
-    for number in spelled_digits:
-        if subLine.startswith(number):
-            return spelled_digits[number], subLine
-        if subLine.endswith(number):
-            return spelled_digits[number], subLine
-    return None, subLine
+from packages import parser
 
 
-with open(os.getcwd() + f'/inputs/day1', 'r') as f:
-    data = f.readlines()
-
-answer = 0
-for line in data:
-    line = line.strip()
-    digit1, digit2 = None, None
-    subLine1, subLine2 = '', ''
-    for i in range(len(line)):
-        if digit1 == None:
-            digit1, subLine1 = temp(line[i], subLine1)
-        if digit2 == None:
-            digit2, subLine2 = temp(line[len(line)-1-i], subLine2, True)
-
-        if digit1 and digit2:
-            num = digit1*10+digit2
-            answer+=num
-            break
-
-print(answer)
+def getInput():
+    left, right = {}, {}
+    data = parser.readData('2024_day1.txt')
+    for i, d in enumerate(data):
+        l, r = d.split()
+        if int(l) not in left:
+            left[int(l)] = []
+        if int(r) not in right:
+            right[int(r)] = []
+        left[int(l)].append(i)
+        right[int(r)].append(i)
+    return left, right
 
 
 
+left, right = getInput()
+left, right = dict(sorted(left.items())), dict(sorted(right.items(), reverse=True))
+
+print(left)
+print(right)
+t_distance = 0
+similarity = 0
+##### Task 1
+# r_number, r_keys = right.popitem()
+# for l_number, l_keys in left.items():
+#     _ = 0
+#     while _ < len(l_keys):
+#         if len(r_keys) == 0:
+#             r_number, r_keys = right.popitem()
+#         r_key, r_keys = r_keys[0], r_keys[1:]
+#         l_key = l_keys[_]
+#         t_distance += abs(r_number - l_number)
+#         _ +=1
+# print(t_distance)
+
+##### Task 2
+for l_number, l_keys in left.items():
+    if l_number in right:
+        print(l_number, right[l_number])
+        similarity += l_number * len(right[l_number]) * len(l_keys)
+print(similarity)

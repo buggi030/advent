@@ -1,16 +1,9 @@
-class iterate(array):
-    def __init__(self, structure):
-        self.value = structure
-        self.key = None
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.next()
-
-    def next(self):
-        if self.num < self.n:
-            cur, self.num = self.num, self.num+1
-            return cur
-        raise StopIteration()
+def draw(map, extra):
+    for i, row in enumerate(map):
+        for j, position in enumerate(row):
+            if (i,j) in extra:
+                print('*', end='')
+            else:
+                print(map[i][j], end='')
+        print("")
